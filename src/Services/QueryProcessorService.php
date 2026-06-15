@@ -16,10 +16,9 @@ use AndyDefer\PhpSearch\Contracts\Services\WordComparatorInterface;
  */
 class QueryProcessorService implements QueryProcessorInterface
 {
-
     public function __construct(
         private readonly StringNormalizerInterface $normalizer,
-        private readonly  NGramEngineInterface $ngramEngine,
+        private readonly NGramEngineInterface $ngramEngine,
         private readonly WordComparatorInterface $comparator
     ) {}
 
@@ -79,9 +78,10 @@ class QueryProcessorService implements QueryProcessorInterface
             return null;
         }
 
+        // Faire la moyenne au lieu de la somme
         return [
-            'score' => $totalScore,
-            'max_possible' => $totalMaxPossible,
+            'score' => $totalScore / $wordCount,
+            'max_possible' => $totalMaxPossible / $wordCount,
             'percentage' => round($totalPercentage / $wordCount, 2),
         ];
     }
@@ -114,6 +114,6 @@ class QueryProcessorService implements QueryProcessorInterface
     {
         $words = explode(' ', $string);
 
-        return array_values(array_filter($words, fn(string $word): bool => $word !== ''));
+        return array_values(array_filter($words, fn (string $word): bool => $word !== ''));
     }
 }

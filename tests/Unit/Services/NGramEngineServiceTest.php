@@ -11,6 +11,7 @@ use AndyDefer\PhpSearch\Tests\TestCase;
 final class NGramEngineServiceTest extends TestCase
 {
     private NGramEngineInterface $service;
+
     private CacheInterface $cache;
 
     protected function setUp(): void
@@ -134,7 +135,7 @@ final class NGramEngineServiceTest extends TestCase
         $grams = $this->service->generateWithCache($word);
 
         // Assert
-        $cacheKey = 'ngram.grams.' . $word;
+        $cacheKey = 'ngram.grams.'.$word;
         $cached = $this->cache->get($cacheKey);
         $this->assertSame($grams, $cached);
     }
@@ -206,7 +207,7 @@ final class NGramEngineServiceTest extends TestCase
         $score = $this->service->getMaxScoreWithCache($word);
 
         // Assert
-        $cacheKey = 'ngram.scores.' . $word;
+        $cacheKey = 'ngram.scores.'.$word;
         $cached = $this->cache->get($cacheKey);
         $this->assertSame($score, $cached);
     }
@@ -226,10 +227,10 @@ final class NGramEngineServiceTest extends TestCase
         $this->service->clearCache();
 
         // Assert
-        $cacheKeyGrams1 = 'ngram.grams.' . $word1;
-        $cacheKeyGrams2 = 'ngram.grams.' . $word2;
-        $cacheKeyScores1 = 'ngram.scores.' . $word1;
-        $cacheKeyScores2 = 'ngram.scores.' . $word2;
+        $cacheKeyGrams1 = 'ngram.grams.'.$word1;
+        $cacheKeyGrams2 = 'ngram.grams.'.$word2;
+        $cacheKeyScores1 = 'ngram.scores.'.$word1;
+        $cacheKeyScores2 = 'ngram.scores.'.$word2;
 
         $this->assertNull($this->cache->get($cacheKeyGrams1));
         $this->assertNull($this->cache->get($cacheKeyGrams2));

@@ -6,7 +6,7 @@ namespace AndyDefer\PhpSearch\Contracts\Services;
 
 /**
  * Interface for dataset preprocessing operations.
- * 
+ *
  * Defines the contract for preprocessing datasets by converting items
  * into precomputed word data structures for optimized searching.
  */
@@ -15,8 +15,7 @@ interface DatasetPreprocessorInterface
     /**
      * Sets and preprocesses a new dataset.
      *
-     * @param array<int, string> $data The dataset to process
-     * @return void
+     * @param  array<int, string>  $data  The dataset to process
      */
     public function setData(array $data): void;
 

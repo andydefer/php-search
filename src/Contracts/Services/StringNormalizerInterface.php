@@ -6,7 +6,7 @@ namespace AndyDefer\PhpSearch\Contracts\Services;
 
 /**
  * Interface for string normalization and cleaning operations.
- * 
+ *
  * Defines the contract for removing accents, diacritics, special characters,
  * and normalizing whitespace with caching support.
  */
@@ -17,7 +17,7 @@ interface StringNormalizerInterface
      *
      * Keeps only alphanumeric characters, spaces, apostrophes, and hyphens.
      *
-     * @param string $input The string to clean
+     * @param  string  $input  The string to clean
      * @return string The string with special characters replaced by spaces
      */
     public function removeSpecialChars(string $input): string;
@@ -25,7 +25,7 @@ interface StringNormalizerInterface
     /**
      * Converts accented characters to their ASCII equivalents.
      *
-     * @param string $input The string to normalize
+     * @param  string  $input  The string to normalize
      * @return string The string with accents removed
      */
     public function removeAccents(string $input): string;
@@ -36,7 +36,7 @@ interface StringNormalizerInterface
      * Applies accent removal, special character filtering, and whitespace normalization.
      * Results are cached for identical input strings.
      *
-     * @param string $input The string to clean
+     * @param  string  $input  The string to clean
      * @return string The fully cleaned string
      */
     public function clean(string $input): string;

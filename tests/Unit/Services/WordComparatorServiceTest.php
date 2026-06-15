@@ -12,7 +12,9 @@ use AndyDefer\PhpSearch\Tests\TestCase;
 final class WordComparatorServiceTest extends TestCase
 {
     private WordComparatorInterface $service;
+
     private NGramEngineInterface $ngramEngine;
+
     private CacheInterface $cache;
 
     protected function setUp(): void
@@ -119,11 +121,11 @@ final class WordComparatorServiceTest extends TestCase
         // Arrange
         $queryData = [
             'normalized' => 'hello',
-            'ngrams' => $this->ngramEngine->generateWithCache('hello')
+            'ngrams' => $this->ngramEngine->generateWithCache('hello'),
         ];
         $itemData = [
             'normalized' => 'hello',
-            'max_score' => $this->ngramEngine->getMaxScoreWithCache('hello')
+            'max_score' => $this->ngramEngine->getMaxScoreWithCache('hello'),
         ];
 
         // Act
@@ -138,11 +140,11 @@ final class WordComparatorServiceTest extends TestCase
         // Arrange
         $queryData = [
             'normalized' => 'hello',
-            'ngrams' => $this->ngramEngine->generateWithCache('hello')
+            'ngrams' => $this->ngramEngine->generateWithCache('hello'),
         ];
         $itemData = [
             'normalized' => 'hero',
-            'max_score' => $this->ngramEngine->getMaxScoreWithCache('hero')
+            'max_score' => $this->ngramEngine->getMaxScoreWithCache('hero'),
         ];
 
         // Act
@@ -158,18 +160,18 @@ final class WordComparatorServiceTest extends TestCase
         // Arrange
         $queryData = [
             'normalized' => 'john',
-            'ngrams' => $this->ngramEngine->generateWithCache('john')
+            'ngrams' => $this->ngramEngine->generateWithCache('john'),
         ];
 
         $itemWords = [
             [
                 'normalized' => 'john',
-                'max_score' => $this->ngramEngine->getMaxScoreWithCache('john')
+                'max_score' => $this->ngramEngine->getMaxScoreWithCache('john'),
             ],
             [
                 'normalized' => 'jane',
-                'max_score' => $this->ngramEngine->getMaxScoreWithCache('jane')
-            ]
+                'max_score' => $this->ngramEngine->getMaxScoreWithCache('jane'),
+            ],
         ];
 
         // Act
@@ -185,14 +187,14 @@ final class WordComparatorServiceTest extends TestCase
         // Arrange
         $queryData = [
             'normalized' => 'xyz',
-            'ngrams' => $this->ngramEngine->generateWithCache('xyz')
+            'ngrams' => $this->ngramEngine->generateWithCache('xyz'),
         ];
 
         $itemWords = [
             [
                 'normalized' => 'abc',
-                'max_score' => $this->ngramEngine->getMaxScoreWithCache('abc')
-            ]
+                'max_score' => $this->ngramEngine->getMaxScoreWithCache('abc'),
+            ],
         ];
 
         // Act
@@ -208,18 +210,18 @@ final class WordComparatorServiceTest extends TestCase
         // Arrange
         $queryData = [
             'normalized' => 'john',
-            'ngrams' => $this->ngramEngine->generateWithCache('john')
+            'ngrams' => $this->ngramEngine->generateWithCache('john'),
         ];
 
         $itemWords = [
             [
                 'normalized' => 'jon',
-                'max_score' => $this->ngramEngine->getMaxScoreWithCache('jon')
+                'max_score' => $this->ngramEngine->getMaxScoreWithCache('jon'),
             ],
             [
                 'normalized' => 'johnny',
-                'max_score' => $this->ngramEngine->getMaxScoreWithCache('johnny')
-            ]
+                'max_score' => $this->ngramEngine->getMaxScoreWithCache('johnny'),
+            ],
         ];
 
         // Act
@@ -236,7 +238,7 @@ final class WordComparatorServiceTest extends TestCase
         // Arrange
         $queryData = [
             'normalized' => 'test',
-            'ngrams' => $this->ngramEngine->generateWithCache('test')
+            'ngrams' => $this->ngramEngine->generateWithCache('test'),
         ];
 
         $itemWords = [];
@@ -254,22 +256,22 @@ final class WordComparatorServiceTest extends TestCase
         // Arrange
         $queryData = [
             'normalized' => 'leonard',
-            'ngrams' => $this->ngramEngine->generateWithCache('leonard')
+            'ngrams' => $this->ngramEngine->generateWithCache('leonard'),
         ];
 
         $itemWords = [
             [
                 'normalized' => 'leonardo',
-                'max_score' => $this->ngramEngine->getMaxScoreWithCache('leonardo')
+                'max_score' => $this->ngramEngine->getMaxScoreWithCache('leonardo'),
             ],
             [
                 'normalized' => 'leonard',
-                'max_score' => $this->ngramEngine->getMaxScoreWithCache('leonard')
+                'max_score' => $this->ngramEngine->getMaxScoreWithCache('leonard'),
             ],
             [
                 'normalized' => 'lenny',
-                'max_score' => $this->ngramEngine->getMaxScoreWithCache('lenny')
-            ]
+                'max_score' => $this->ngramEngine->getMaxScoreWithCache('lenny'),
+            ],
         ];
 
         // Act
@@ -284,11 +286,11 @@ final class WordComparatorServiceTest extends TestCase
         // Arrange
         $queryData = [
             'normalized' => 'hello world',
-            'ngrams' => $this->ngramEngine->generateWithCache('hello')
+            'ngrams' => $this->ngramEngine->generateWithCache('hello'),
         ];
         $itemData = [
             'normalized' => 'hello',
-            'max_score' => 100.0
+            'max_score' => 100.0,
         ];
 
         // Act

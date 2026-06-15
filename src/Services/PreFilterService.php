@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpSearch\Services;
 
+use AndyDefer\PhpSearch\Contracts\Configs\SearchConfigInterface;
 use AndyDefer\PhpSearch\Contracts\Services\PreFilterInterface;
 use AndyDefer\PhpSearch\Contracts\Services\StringNormalizerInterface;
-use AndyDefer\PhpSearch\Contracts\Configs\SearchConfigInterface;
 
 /**
  * Applies pre-filtering to reduce candidates before detailed comparison.

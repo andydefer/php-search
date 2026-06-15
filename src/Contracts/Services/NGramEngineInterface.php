@@ -6,7 +6,7 @@ namespace AndyDefer\PhpSearch\Contracts\Services;
 
 /**
  * Interface for n-gram generation and weighting operations.
- * 
+ *
  * Defines the contract for generating character n-grams (2, 3, and 4-grams)
  * and calculating weighted scores for string comparison.
  */
@@ -15,7 +15,7 @@ interface NGramEngineInterface
     /**
      * Generates all n-grams for a word.
      *
-     * @param string $word The word to analyze
+     * @param  string  $word  The word to analyze
      * @return array<int, string> Array of unique n-grams
      */
     public function generate(string $word): array;
@@ -23,7 +23,7 @@ interface NGramEngineInterface
     /**
      * Generates n-grams with caching.
      *
-     * @param string $word The word to analyze
+     * @param  string  $word  The word to analyze
      * @return array<int, string> Array of unique n-grams
      */
     public function generateWithCache(string $word): array;
@@ -31,7 +31,7 @@ interface NGramEngineInterface
     /**
      * Calculates the weight of an n-gram based on its length.
      *
-     * @param int $length The n-gram length (2-4)
+     * @param  int  $length  The n-gram length (2-4)
      * @return float The weight value
      */
     public function getWeight(int $length): float;
@@ -39,7 +39,7 @@ interface NGramEngineInterface
     /**
      * Calculates the maximum possible score for a word.
      *
-     * @param string $word The word to evaluate
+     * @param  string  $word  The word to evaluate
      * @return float The maximum possible score
      */
     public function getMaxScore(string $word): float;
@@ -47,7 +47,7 @@ interface NGramEngineInterface
     /**
      * Gets maximum possible score with caching.
      *
-     * @param string $word The word to evaluate
+     * @param  string  $word  The word to evaluate
      * @return float The maximum possible score
      */
     public function getMaxScoreWithCache(string $word): float;

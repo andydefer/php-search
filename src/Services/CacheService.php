@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpSearch\Services;
 
-use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
 use AndyDefer\PhpSearch\Contracts\Configs\SearchConfigInterface;
+use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
 use DateInterval;
 
 /**
@@ -45,7 +45,7 @@ final class CacheService implements CacheInterface
 
     public function setWithInterval(string $key, mixed $value, DateInterval $ttl): bool
     {
-        $now = new \DateTimeImmutable();
+        $now = new \DateTimeImmutable;
         $expiry = $now->add($ttl);
 
         $this->cache[$key] = [
@@ -141,7 +141,7 @@ final class CacheService implements CacheInterface
 
     public function getRecord(string $key): ?array
     {
-        if (!isset($this->cache[$key])) {
+        if (! isset($this->cache[$key])) {
             return null;
         }
 

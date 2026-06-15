@@ -11,7 +11,6 @@ use AndyDefer\PhpSearch\Contracts\Services\FuzzySearchInterface;
  */
 class FuzzySearchService implements FuzzySearchInterface
 {
-
     public function __construct(
         private readonly SearchEngineService $searchEngine
     ) {}
@@ -19,28 +18,28 @@ class FuzzySearchService implements FuzzySearchInterface
     /**
      * Load data from JSON file and search
      *
-     * @param string $jsonFile Path to JSON file
-     * @param string $query Search query
-     * @param int $limit Maximum results
+     * @param  string  $jsonFile  Path to JSON file
+     * @param  string  $query  Search query
+     * @param  int  $limit  Maximum results
      * @return array<int, array<string, mixed>>
      */
     public function searchFromFile(string $jsonFile, string $query, int $limit = 5): array
     {
-        if (!file_exists($jsonFile)) {
+        if (! file_exists($jsonFile)) {
             throw new \InvalidArgumentException("JSON file not found: {$jsonFile}");
         }
 
         $jsonContent = file_get_contents($jsonFile);
         $data = json_decode($jsonContent, true);
 
-        if (!is_array($data)) {
-            throw new \InvalidArgumentException("Invalid JSON format. Expected array of strings.");
+        if (! is_array($data)) {
+            throw new \InvalidArgumentException('Invalid JSON format. Expected array of strings.');
         }
 
         // Validate data is array of strings
         foreach ($data as $item) {
-            if (!is_string($item)) {
-                throw new \InvalidArgumentException("JSON must contain only strings. Found invalid type.");
+            if (! is_string($item)) {
+                throw new \InvalidArgumentException('JSON must contain only strings. Found invalid type.');
             }
         }
 
@@ -52,9 +51,9 @@ class FuzzySearchService implements FuzzySearchInterface
     /**
      * Search directly from array
      *
-     * @param array<int, string> $data Dataset
-     * @param string $query Search query
-     * @param int $limit Maximum results
+     * @param  array<int, string>  $data  Dataset
+     * @param  string  $query  Search query
+     * @param  int  $limit  Maximum results
      * @return array<int, array<string, mixed>>
      */
     public function searchFromArray(array $data, string $query, int $limit = 5): array
@@ -67,9 +66,7 @@ class FuzzySearchService implements FuzzySearchInterface
     /**
      * Format results for CLI output
      *
-     * @param array<int, array<string, mixed>> $results
-     * @param string $query
-     * @return string
+     * @param  array<int, array<string, mixed>>  $results
      */
     public function formatResults(array $results, string $query): string
     {
@@ -77,16 +74,16 @@ class FuzzySearchService implements FuzzySearchInterface
             return "No results found for '{$query}'.\n";
         }
 
-        $output = "Top " . count($results) . " results for '{$query}':\n";
-        $output .= str_repeat('=', 80) . "\n";
+        $output = 'Top '.count($results)." results for '{$query}':\n";
+        $output .= str_repeat('=', 80)."\n";
 
         foreach ($results as $index => $result) {
             $isMax = ($result['percentage'] == 100) ? ' - [MAX POSSIBLE]' : '';
-            $output .= ($index + 1) . '. ' . $result['name'] .
-                ' (score: ' . $result['score'] .
-                ' / max: ' . $result['max_possible'] .
-                ') - Relevance: ' . $result['percentage'] . '%' .
-                $isMax . "\n";
+            $output .= ($index + 1).'. '.$result['name'].
+                ' (score: '.$result['score'].
+                ' / max: '.$result['max_possible'].
+                ') - Relevance: '.$result['percentage'].'%'.
+                $isMax."\n";
         }
 
         return $output;

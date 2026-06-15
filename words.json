@@ -1,0 +1,13 @@
+[
+    "Add PSR-11 compatible DI Container with singleton support",
+    "Create config/container.php for centralised dependency management",
+    "Add TestCase with getContainer() and getService() methods",
+    "Extract all interfaces into Contracts namespace",
+    "Inject SearchConfigInterface instead of using constants",
+    "Inject CacheInterface for all caching operations",
+    "Add strtolower() normalization in PreFilter and NGramEngine for case-insensitivity",
+    "Refactor all service tests to use container and AAA pattern",
+    "Fix test expectations to match actual implementation behavior",
+    "Add FileSystemInterface and FileSystemService",
+    "Remove hardcoded dependencies from all test classes"
+]

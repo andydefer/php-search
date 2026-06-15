@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpSearch\Services;
 
-use AndyDefer\PhpSearch\Contracts\Services\WordComparatorInterface;
-use AndyDefer\PhpSearch\Contracts\Services\NGramEngineInterface;
 use AndyDefer\PhpSearch\Contracts\Configs\SearchConfigInterface;
+use AndyDefer\PhpSearch\Contracts\Services\NGramEngineInterface;
+use AndyDefer\PhpSearch\Contracts\Services\WordComparatorInterface;
 
 /**
  * Compares words using n-gram analysis with performance optimizations.
@@ -129,7 +129,7 @@ class WordComparatorService implements WordComparatorInterface
         }
 
         // Keep only top candidates
-        usort($candidates, fn($a, $b) => $b['matches'] <=> $a['matches']);
+        usort($candidates, fn ($a, $b) => $b['matches'] <=> $a['matches']);
         $candidates = array_slice($candidates, 0, $this->config->getMaxCandidates());
 
         $bestScore = 0.0;

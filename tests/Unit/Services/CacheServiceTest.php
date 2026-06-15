@@ -317,7 +317,7 @@ final class CacheServiceTest extends TestCase
     {
         // Arrange
         $key = 'object';
-        $value = new \stdClass();
+        $value = new \stdClass;
         $value->property = 'test';
 
         // Act

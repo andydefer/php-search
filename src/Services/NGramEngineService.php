@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpSearch\Services;
 
-use AndyDefer\PhpSearch\Contracts\Services\NGramEngineInterface;
-use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
 use AndyDefer\PhpSearch\Contracts\Configs\SearchConfigInterface;
+use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
+use AndyDefer\PhpSearch\Contracts\Services\NGramEngineInterface;
 
 /**
  * Generates and weights n-grams for string comparison.
@@ -24,12 +24,12 @@ class NGramEngineService implements NGramEngineInterface
     /**
      * Stores a key in the keys registry.
      *
-     * @param string $key The cache key to track
+     * @param  string  $key  The cache key to track
      */
     private function trackKey(string $key): void
     {
         $keys = $this->cache->get($this->config->getCacheKeyKeys(), []);
-        if (!in_array($key, $keys, true)) {
+        if (! in_array($key, $keys, true)) {
             $keys[] = $key;
             $this->cache->setWithDefaultTtl($this->config->getCacheKeyKeys(), $keys);
         }
@@ -78,7 +78,7 @@ class NGramEngineService implements NGramEngineInterface
     {
         // Normaliser le mot pour la clé de cache
         $normalizedWord = strtolower($word);
-        $key = $this->config->getCacheKeyGrams() . $normalizedWord;
+        $key = $this->config->getCacheKeyGrams().$normalizedWord;
         $cached = $this->cache->get($key);
 
         if ($cached !== null && is_array($cached)) {
@@ -135,7 +135,7 @@ class NGramEngineService implements NGramEngineInterface
     {
         // Normaliser le mot pour la clé de cache
         $normalizedWord = strtolower($word);
-        $key = $this->config->getCacheKeyScores() . $normalizedWord;
+        $key = $this->config->getCacheKeyScores().$normalizedWord;
         $cached = $this->cache->get($key);
 
         if ($cached !== null && is_float($cached)) {

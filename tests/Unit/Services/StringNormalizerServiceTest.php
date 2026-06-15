@@ -11,6 +11,7 @@ use AndyDefer\PhpSearch\Tests\TestCase;
 final class StringNormalizerServiceTest extends TestCase
 {
     private StringNormalizerInterface $service;
+
     private CacheInterface $cache;
 
     protected function setUp(): void

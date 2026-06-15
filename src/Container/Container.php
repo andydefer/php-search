@@ -50,13 +50,14 @@ class Container implements ContainerInterface
     /**
      * Finds an entry of the container by its identifier and returns it.
      *
-     * @param string $id Identifier of the entry to look for.
+     * @param  string  $id  Identifier of the entry to look for.
      * @return mixed Entry.
+     *
      * @throws \InvalidArgumentException
      */
     public function get(string $id): mixed
     {
-        if (!$this->has($id)) {
+        if (! $this->has($id)) {
             throw new \InvalidArgumentException("Service not found: {$id}");
         }
 
@@ -72,6 +73,7 @@ class Container implements ContainerInterface
             $instance = $entry($this);
             $this->entries[$id] = $instance;
             $this->resolved[$id] = true;
+
             return $instance;
         }
 
@@ -82,8 +84,7 @@ class Container implements ContainerInterface
     /**
      * Returns true if the container can return an entry for the given identifier.
      *
-     * @param string $id Identifier of the entry to look for.
-     * @return bool
+     * @param  string  $id  Identifier of the entry to look for.
      */
     public function has(string $id): bool
     {

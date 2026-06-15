@@ -18,7 +18,7 @@ abstract class TestCase extends BaseTestCase
     protected function getContainer(): Container
     {
         if ($this->container === null) {
-            $this->container = require __DIR__ . '/../config/container.php';
+            $this->container = require __DIR__.'/../config/container.php';
         }
 
         return $this->container;
@@ -27,8 +27,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Get a service from the container.
      *
-     * @param string $id Service identifier (interface or class name)
-     * @return mixed
+     * @param  string  $id  Service identifier (interface or class name)
      */
     protected function getService(string $id): mixed
     {

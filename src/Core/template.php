@@ -409,7 +409,7 @@ class WordComparator
         }
 
         // Keep only top candidates
-        usort($candidates, fn($a, $b) => $b['matches'] <=> $a['matches']);
+        usort($candidates, fn ($a, $b) => $b['matches'] <=> $a['matches']);
         $candidates = array_slice($candidates, 0, self::MAX_CANDIDATES);
 
         $bestScore = 0.0;
@@ -587,7 +587,7 @@ class DatasetPreprocessor
     {
         $words = explode(' ', $string);
 
-        return array_values(array_filter($words, fn(string $word): bool => $word !== ''));
+        return array_values(array_filter($words, fn (string $word): bool => $word !== ''));
     }
 }
 
@@ -705,7 +705,7 @@ class QueryProcessor
     {
         $words = explode(' ', $string);
 
-        return array_values(array_filter($words, fn(string $word): bool => $word !== ''));
+        return array_values(array_filter($words, fn (string $word): bool => $word !== ''));
     }
 }
 
@@ -823,13 +823,13 @@ if (isset($artistes)) {
     $results = $searchEngine->search($query, 5);
 
     echo "Top 5 résultats pour '$query' :\n";
-    echo str_repeat('=', 80) . "\n";
+    echo str_repeat('=', 80)."\n";
     foreach ($results as $index => $result) {
         $isMax = ($result['percentage'] == 100) ? ' - [MAX POSSIBLE]' : '';
-        echo ($index + 1) . '. ' . $result['name'] .
-            ' (score: ' . $result['score'] .
-            ' / max: ' . $result['max_possible'] .
-            ') - Pertinence: ' . $result['percentage'] . '%' .
-            $isMax . "\n";
+        echo ($index + 1).'. '.$result['name'].
+            ' (score: '.$result['score'].
+            ' / max: '.$result['max_possible'].
+            ') - Pertinence: '.$result['percentage'].'%'.
+            $isMax."\n";
     }
 }

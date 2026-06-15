@@ -11,6 +11,7 @@ use AndyDefer\PhpSearch\Tests\TestCase;
 final class PreFilterServiceTest extends TestCase
 {
     private PreFilterInterface $service;
+
     private CacheInterface $cache;
 
     protected function setUp(): void
@@ -213,7 +214,7 @@ final class PreFilterServiceTest extends TestCase
             'Leonard Cohen',
             'Leonardo da Vinci',
             'Leonard Nimoy',
-            'Léonard de Vinci'
+            'Léonard de Vinci',
         ];
         $query = 'Leonard';
 
@@ -231,7 +232,7 @@ final class PreFilterServiceTest extends TestCase
             'John Fitzgerald Kennedy',
             'John Lennon',
             'Johnny Cash',
-            'Jonathan Swift'
+            'Jonathan Swift',
         ];
         $query = 'John';
 

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpSearch\Services;
 
+use AndyDefer\PhpSearch\Contracts\Configs\SearchConfigInterface;
+use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
 use AndyDefer\PhpSearch\Contracts\Services\DatasetPreprocessorInterface;
 use AndyDefer\PhpSearch\Contracts\Services\NGramEngineInterface;
-use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
-use AndyDefer\PhpSearch\Contracts\Configs\SearchConfigInterface;
-use AndyDefer\PhpSearch\Services\StringNormalizerService;
 
 /**
  * Preprocesses and stores dataset for optimized searching.
@@ -64,6 +63,7 @@ class DatasetPreprocessorService implements DatasetPreprocessorInterface
     public function getRawData(): array
     {
         $rawData = $this->cache->get($this->config->getCacheKeyRawData());
+
         return is_array($rawData) ? $rawData : [];
     }
 
@@ -75,6 +75,7 @@ class DatasetPreprocessorService implements DatasetPreprocessorInterface
     public function getPreprocessed(): array
     {
         $preprocessed = $this->cache->get($this->config->getCacheKeyPreprocessed());
+
         return is_array($preprocessed) ? $preprocessed : [];
     }
 
@@ -88,7 +89,7 @@ class DatasetPreprocessorService implements DatasetPreprocessorInterface
     {
         $words = explode(' ', $string);
 
-        return array_values(array_filter($words, fn(string $word): bool => $word !== ''));
+        return array_values(array_filter($words, fn (string $word): bool => $word !== ''));
     }
 
     /**

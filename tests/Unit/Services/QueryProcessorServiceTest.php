@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace AndyDefer\PhpSearch\Tests\Unit\Services;
 
 use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
-use AndyDefer\PhpSearch\Contracts\Services\NGramEngineInterface;
 use AndyDefer\PhpSearch\Contracts\Services\QueryProcessorInterface;
-use AndyDefer\PhpSearch\Contracts\Services\StringNormalizerInterface;
-use AndyDefer\PhpSearch\Contracts\Services\WordComparatorInterface;
 use AndyDefer\PhpSearch\Tests\TestCase;
 
 final class QueryProcessorServiceTest extends TestCase
 {
     private QueryProcessorInterface $service;
+
     private CacheInterface $cache;
 
     protected function setUp(): void
@@ -189,7 +187,7 @@ final class QueryProcessorServiceTest extends TestCase
         $items = [
             'Leonard Cohen',
             'Leonardo DiCaprio',
-            'Albert Einstein'  // Remplacer Marie Curie par quelque chose sans lettres communes avec Leonard
+            'Albert Einstein',  // Remplacer Marie Curie par quelque chose sans lettres communes avec Leonard
         ];
 
         $itemWordsList = [];
@@ -274,10 +272,19 @@ final class QueryProcessorServiceTest extends TestCase
     private function createMockMaxScore(string $word): float
     {
         $length = strlen($word);
-        if ($length === 0) return 0;
-        if ($length === 1) return 0;
-        if ($length === 2) return 2.5;
-        if ($length === 3) return 9.0;
+        if ($length === 0) {
+            return 0;
+        }
+        if ($length === 1) {
+            return 0;
+        }
+        if ($length === 2) {
+            return 2.5;
+        }
+        if ($length === 3) {
+            return 9.0;
+        }
+
         return 15.5;
     }
 }

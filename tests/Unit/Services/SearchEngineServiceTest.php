@@ -11,6 +11,7 @@ use AndyDefer\PhpSearch\Tests\TestCase;
 final class SearchEngineServiceTest extends TestCase
 {
     private SearchEngineInterface $engine;
+
     private CacheInterface $cache;
 
     protected function setUp(): void
@@ -82,7 +83,7 @@ final class SearchEngineServiceTest extends TestCase
             'Leonardo DiCaprio',
             'Leonard Nimoy',
             'Leonard Bernstein',
-            'Leonard Mlodinow'
+            'Leonard Mlodinow',
         ];
         $this->engine->setData($data);
 
@@ -156,7 +157,7 @@ final class SearchEngineServiceTest extends TestCase
         $data = [
             'Leonard Cohen',
             'Leonardo DiCaprio',
-            'Lenny Kravitz'
+            'Lenny Kravitz',
         ];
         $this->engine->setData($data);
 
@@ -222,7 +223,7 @@ final class SearchEngineServiceTest extends TestCase
         $data = [
             'John Fitzgerald Kennedy',
             'John Lennon',
-            'Johnny Cash'
+            'Johnny Cash',
         ];
         $this->engine->setData($data);
 
@@ -277,7 +278,7 @@ final class SearchEngineServiceTest extends TestCase
             'Léonard de Vinci',
             'Léonard Gautier',
             'Marie Curie',
-            'Albert Einstein'
+            'Albert Einstein',
         ];
         $this->engine->setData($artists);
 
@@ -297,7 +298,7 @@ final class SearchEngineServiceTest extends TestCase
         $artists = [
             'Leonard Cohen',
             'Leonardo DiCaprio',
-            'Léonard de Vinci'
+            'Léonard de Vinci',
         ];
         $this->engine->setData($artists);
 

@@ -181,7 +181,7 @@ enum PermissionMode: int
     {
         $octal = decoct($this->value);
 
-        return $withLeadingZero ? '0' . $octal : $octal;
+        return $withLeadingZero ? '0'.$octal : $octal;
     }
 
     /**

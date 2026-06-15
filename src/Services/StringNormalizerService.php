@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpSearch\Services;
 
-use AndyDefer\PhpSearch\Contracts\Services\StringNormalizerInterface;
-use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
 use AndyDefer\PhpSearch\Contracts\Configs\SearchConfigInterface;
+use AndyDefer\PhpSearch\Contracts\Services\CacheInterface;
+use AndyDefer\PhpSearch\Contracts\Services\StringNormalizerInterface;
 
 /**
  * Handles string normalization and cleaning operations.
@@ -24,12 +24,12 @@ class StringNormalizerService implements StringNormalizerInterface
     /**
      * Stores a key in the keys registry.
      *
-     * @param string $key The cache key to track
+     * @param  string  $key  The cache key to track
      */
     private function trackKey(string $key): void
     {
         $keys = $this->cache->get($this->config->getCacheKeyKeys(), []);
-        if (!in_array($key, $keys, true)) {
+        if (! in_array($key, $keys, true)) {
             $keys[] = $key;
             $this->cache->setWithDefaultTtl($this->config->getCacheKeyKeys(), $keys);
         }
@@ -70,7 +70,7 @@ class StringNormalizerService implements StringNormalizerInterface
      */
     public function clean(string $input): string
     {
-        $cacheKey = $this->config->getCacheKeyNormalized() . $input;
+        $cacheKey = $this->config->getCacheKeyNormalized().$input;
 
         $cached = $this->cache->get($cacheKey);
         if ($cached !== null && is_string($cached)) {

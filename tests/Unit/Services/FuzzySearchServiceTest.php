@@ -10,6 +10,7 @@ use AndyDefer\PhpSearch\Tests\TestCase;
 final class FuzzySearchServiceTest extends TestCase
 {
     private FuzzySearchInterface $fuzzySearch;
+
     private string $tempFile;
 
     protected function setUp(): void
@@ -90,7 +91,7 @@ final class FuzzySearchServiceTest extends TestCase
 
         // Expect
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid JSON format. Expected array of strings.");
+        $this->expectExceptionMessage('Invalid JSON format. Expected array of strings.');
 
         // Act
         $this->fuzzySearch->searchFromFile($this->tempFile, 'test');
@@ -103,7 +104,7 @@ final class FuzzySearchServiceTest extends TestCase
 
         // Expect
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid JSON format. Expected array of strings.");
+        $this->expectExceptionMessage('Invalid JSON format. Expected array of strings.');
 
         // Act
         $this->fuzzySearch->searchFromFile($this->tempFile, 'test');
@@ -117,7 +118,7 @@ final class FuzzySearchServiceTest extends TestCase
 
         // Expect
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("JSON must contain only strings. Found invalid type.");
+        $this->expectExceptionMessage('JSON must contain only strings. Found invalid type.');
 
         // Act
         $this->fuzzySearch->searchFromFile($this->tempFile, 'test');
@@ -131,8 +132,8 @@ final class FuzzySearchServiceTest extends TestCase
                 'name' => 'John Doe',
                 'score' => 45.5,
                 'max_possible' => 56.8,
-                'percentage' => 80.42
-            ]
+                'percentage' => 80.42,
+            ],
         ];
         $query = 'John';
 
@@ -141,10 +142,10 @@ final class FuzzySearchServiceTest extends TestCase
 
         // Assert
         $this->assertStringContainsString("Top 1 results for 'John':", $output);
-        $this->assertStringContainsString("1. John Doe", $output);
-        $this->assertStringContainsString("score: 45.5", $output);
-        $this->assertStringContainsString("max: 56.8", $output);
-        $this->assertStringContainsString("Relevance: 80.42%", $output);
+        $this->assertStringContainsString('1. John Doe', $output);
+        $this->assertStringContainsString('score: 45.5', $output);
+        $this->assertStringContainsString('max: 56.8', $output);
+        $this->assertStringContainsString('Relevance: 80.42%', $output);
     }
 
     public function test_format_results_handles_max_possible_flag(): void
@@ -155,8 +156,8 @@ final class FuzzySearchServiceTest extends TestCase
                 'name' => 'Perfect Match',
                 'score' => 100,
                 'max_possible' => 100,
-                'percentage' => 100
-            ]
+                'percentage' => 100,
+            ],
         ];
         $query = 'Perfect';
 
@@ -188,20 +189,20 @@ final class FuzzySearchServiceTest extends TestCase
                 'name' => 'First Result',
                 'score' => 90,
                 'max_possible' => 100,
-                'percentage' => 90
+                'percentage' => 90,
             ],
             [
                 'name' => 'Second Result',
                 'score' => 80,
                 'max_possible' => 100,
-                'percentage' => 80
+                'percentage' => 80,
             ],
             [
                 'name' => 'Third Result',
                 'score' => 70,
                 'max_possible' => 100,
-                'percentage' => 70
-            ]
+                'percentage' => 70,
+            ],
         ];
         $query = 'test';
 
@@ -210,9 +211,9 @@ final class FuzzySearchServiceTest extends TestCase
 
         // Assert
         $this->assertStringContainsString("Top 3 results for 'test':", $output);
-        $this->assertStringContainsString("1. First Result", $output);
-        $this->assertStringContainsString("2. Second Result", $output);
-        $this->assertStringContainsString("3. Third Result", $output);
+        $this->assertStringContainsString('1. First Result', $output);
+        $this->assertStringContainsString('2. Second Result', $output);
+        $this->assertStringContainsString('3. Third Result', $output);
     }
 
     public function test_real_world_scenario_from_array(): void
@@ -226,7 +227,7 @@ final class FuzzySearchServiceTest extends TestCase
             'Leonard Bernstein',
             'Léonard de Vinci',
             'Marie Curie',
-            'Albert Einstein'
+            'Albert Einstein',
         ];
 
         // Act
@@ -245,7 +246,7 @@ final class FuzzySearchServiceTest extends TestCase
         $artists = [
             'Leonard Cohen',
             'Leonardo DiCaprio',
-            'Albert Einstein'
+            'Albert Einstein',
         ];
         file_put_contents($this->tempFile, json_encode($artists));
 
@@ -282,7 +283,7 @@ final class FuzzySearchServiceTest extends TestCase
             'Leonardo DiCaprio',
             'Leonard Nimoy',
             'Leonard Bernstein',
-            'Leonard Mlodinow'
+            'Leonard Mlodinow',
         ];
 
         // Act
