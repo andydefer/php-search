@@ -5,8 +5,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use AndyDefer\PhpSearch\Contracts\Services\IndexedSearchInterface;
-use AndyDefer\PhpSearch\Contracts\Services\JsonlSearchInterface;
+use AndyDefer\PhpSearch\Contracts\Engine\SearchEngineInterface;
 
 function showHelp(): void
 {
@@ -15,33 +14,51 @@ PHP Fuzzy Search Engine - CLI Tool
 
 USAGE:
     # Indexation
-    php-search index <source>                    # Indexer un dossier de fichiers JSONL
+    php-search index <source>
     
-    # Recherche directe (sans index)
-    php-search <directory> <fields> <query> [limit]
+    # Recherche
+    php-search <query> [limit]
+    php-search <query> [limit] --source=<path>
     
-    # Recherche indexée (rapide)
-    php-search --indexed <query> [limit]
+    # Gestion
+    php-search --stats [--source=<path>]
+    php-search --list-indexes
+    php-search --delete-index [--source=<path>]
+    php-search --clear-cache [--source=<path>] [--query=<query>]
 
 ARGUMENTS:
-    source          Dossier contenant des fichiers JSONL à indexer
-    directory       Dossier contenant des fichiers JSONL
-    fields          Champs à rechercher (séparés par |, ex: "name|title")
+    source          Dossier ou fichier JSONL à indexer
     query           Terme de recherche
     limit           Nombre maximum de résultats (défaut: 5)
 
+OPTIONS:
+    --source=<path> Source spécifique (dossier ou fichier)
+    --query=<query> Requête spécifique pour vider le cache
+    --stats         Afficher les statistiques de l'index
+    --list-indexes  Lister tous les index disponibles
+    --delete-index  Supprimer l'index
+    --clear-cache   Vider le cache
+
 EXAMPLES:
     # Indexation
-    php-search index ./data_folder
+    php-search index ./docs
+    php-search index ./docs/artists.jsonl
+    php-search index ./docs2
     
-    # Recherche directe
-    php-search ./data "name|title" "Leonard"
+    # Recherche (utilise le dernier index)
+    php-search "Leonard" 10
     
-    # Recherche avec notation pointée
-    php-search ./data "user.name|product.title" "John" 10
+    # Recherche dans un index spécifique
+    php-search "Doctor" 5 --source=./docs2
     
-    # Recherche indexée
-    php-search --indexed "Leonard" 10
+    # Lister les index
+    php-search --list-indexes
+    
+    # Supprimer un index spécifique
+    php-search --delete-index --source=./docs
+    
+    # Vider le cache d'un index
+    php-search --clear-cache --source=./docs
 
 HELP;
 }
@@ -57,7 +74,8 @@ if ($argc < 2) {
 $container = require __DIR__ . '/../config/container.php';
 
 try {
-    // Mode indexation
+    $engine = $container->get(SearchEngineInterface::class);
+
     if ($argv[1] === 'index') {
         if ($argc < 3) {
             showHelp();
@@ -66,78 +84,97 @@ try {
 
         $source = $argv[2];
 
-        if (!is_dir($source)) {
-            throw new \InvalidArgumentException("Source invalide: {$source} - Doit être un dossier");
+        if (!is_dir($source) && !is_file($source)) {
+            throw new \InvalidArgumentException("Source invalide: {$source}");
         }
 
-        $indexedSearch = $container->get(IndexedSearchInterface::class);
-        $count = $indexedSearch->index($source);
-
+        echo "📂 Indexation de: {$source}\n";
+        $count = $engine->index($source);
         echo "✅ Indexation terminée: {$count} éléments indexés\n";
-        $stats = $indexedSearch->getIndexStats();
-        echo "📁 Dossier d'index: {$stats['index_path']}\n";
         exit(0);
     }
 
-    // Mode recherche indexée
-    if ($argv[1] === '--indexed') {
-        if ($argc < 3) {
-            showHelp();
-            exit(1);
-        }
+    if ($argv[1] === '--list-indexes') {
+        $indexes = $engine->listIndexes();
 
-        $query = $argv[2];
-        $limit = $argc >= 4 ? (int)$argv[3] : 5;
-
-        $indexedSearch = $container->get(IndexedSearchInterface::class);
-        $results = $indexedSearch->search($query, $limit);
-
-        if (empty($results)) {
-            echo "No results found for '{$query}'.\n";
+        if (empty($indexes)) {
+            echo "❌ Aucun index trouvé.\n";
         } else {
-            echo "Top " . count($results) . " results for '{$query}':\n";
-            echo str_repeat('=', 80) . "\n";
-            foreach ($results as $index => $result) {
-                $isMax = ($result['percentage'] == 100) ? ' - [MAX POSSIBLE]' : '';
-                echo ($index + 1) . '. ' . $result['name'] . "\n";
-                echo "   Source: {$result['source']}\n";
-                echo "   Score: {$result['score']} / max: {$result['max_possible']} - Relevance: {$result['percentage']}%{$isMax}\n";
+            echo "📊 Index disponibles:\n";
+            echo str_repeat('-', 60) . "\n";
+            foreach ($indexes as $name => $info) {
+                echo "• {$name}\n";
+                echo "  📁 {$info['path']}\n";
+                echo "  📄 Éléments: {$info['total_items']}\n";
+                echo "  💾 Taille: " . round($info['size_bytes'] / 1024, 2) . " KB\n\n";
             }
         }
         exit(0);
     }
 
-    // Mode recherche directe JSONL
-    if ($argc < 4) {
-        showHelp();
-        exit(1);
+    if ($argv[1] === '--stats') {
+        $source = extractOption($argv, '--source');
+        $stats = $engine->getIndexStats($source);
+
+        echo "📊 Statistiques de l'index:\n";
+        echo str_repeat('-', 40) . "\n";
+        echo "Source: {$stats['source']}\n";
+        echo "Existe: " . ($stats['exists'] ? '✅ Oui' : '❌ Non') . "\n";
+        echo "Éléments indexés: {$stats['total_items']}\n";
+        echo "Chemin de l'index: {$stats['index_path']}\n";
+        echo "Chemin du cache: {$stats['cache_path']}\n";
+        if (isset($stats['index_size_bytes'])) {
+            echo "Taille de l'index: " . round($stats['index_size_bytes'] / 1024, 2) . " KB\n";
+        }
+        exit(0);
     }
 
-    $directory = $argv[1];
-    $fields = $argv[2];
-    $query = $argv[3];
-    $limit = $argc >= 5 ? (int)$argv[4] : 5;
-
-    if (!is_dir($directory)) {
-        throw new \InvalidArgumentException("Dossier invalide: {$directory}");
+    if ($argv[1] === '--delete-index') {
+        $source = extractOption($argv, '--source');
+        $engine->deleteIndex($source);
+        echo "✅ Index supprimé" . ($source ? " pour la source '{$source}'" : "") . "\n";
+        exit(0);
     }
 
-    $jsonlSearch = $container->get(JsonlSearchInterface::class);
-    $results = $jsonlSearch->search($directory, $fields, $query, $limit);
+    if ($argv[1] === '--clear-cache') {
+        $source = extractOption($argv, '--source');
+        $query = extractOption($argv, '--query');
+        $engine->clearCache($source, $query);
+        echo "✅ Cache vidé" .
+            ($source ? " pour la source '{$source}'" : "") .
+            ($query ? " pour la requête '{$query}'" : "") . "\n";
+        exit(0);
+    }
+
+    $query = $argv[1];
+    $limit = $argc >= 3 ? (int)$argv[2] : 5;
+    $source = extractOption($argv, '--source');
+
+    $results = $engine->search($query, $limit, $source);
 
     if (empty($results)) {
         echo "No results found for '{$query}'.\n";
     } else {
-        echo "Top " . count($results) . " results for '{$query}' in '{$directory}':\n";
+        echo "Top " . count($results) . " results for '{$query}':\n";
         echo str_repeat('=', 80) . "\n";
         foreach ($results as $index => $result) {
             $isMax = ($result['percentage'] == 100) ? ' - [MAX POSSIBLE]' : '';
-            echo ($index + 1) . '. ' . basename($result['file']) . ' (line ' . $result['line'] . ")\n";
-            echo "   Data: " . json_encode($result['data']) . "\n";
+            echo ($index + 1) . '. ' . $result['name'] . "\n";
+            echo "   Source: {$result['source']}\n";
             echo "   Score: {$result['score']} / max: {$result['max_possible']} - Relevance: {$result['percentage']}%{$isMax}\n";
         }
     }
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
     exit(1);
+}
+
+function extractOption(array $argv, string $option): ?string
+{
+    foreach ($argv as $arg) {
+        if (str_starts_with($arg, $option . '=')) {
+            return substr($arg, strlen($option) + 1);
+        }
+    }
+    return null;
 }
