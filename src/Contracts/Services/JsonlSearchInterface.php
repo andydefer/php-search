@@ -4,23 +4,18 @@ declare(strict_types=1);
 
 namespace AndyDefer\PhpSearch\Contracts\Services;
 
-/**
- * Interface for JSONL fuzzy search operations.
- *
- * @author Andy Defer
- */
 interface JsonlSearchInterface
 {
     /**
      * Recherche dans tous les fichiers JSONL d'un dossier.
      *
      * @param  string  $directory  Dossier contenant les fichiers .jsonl
-     * @param  string  $fields  Champs à rechercher (séparés par |, ex: "name|title")
+     * @param  array<string>  $fields  Liste des champs à rechercher
      * @param  string  $query  Terme de recherche
      * @param  int  $limit  Nombre maximum de résultats
      * @return array<int, array<string, mixed>> Résultats avec scores
      */
-    public function searchInDirectory(string $directory, string $fields, string $query, int $limit = 5): array;
+    public function searchInDirectory(string $directory, array $fields, string $query, int $limit = 5): array;
 
     /**
      * Recherche dans un seul fichier JSONL.

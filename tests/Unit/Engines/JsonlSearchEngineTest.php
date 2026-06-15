@@ -119,8 +119,8 @@ final class JsonlSearchEngineTest extends TestCase
             ['name' => 'Marie Curie', 'title' => 'Scientist'],
         ]);
 
-        // Act
-        $results = $this->engine->searchInDirectory($this->tempDir, 'name|title', 'Leonard', 5);
+        // Act - Utilisation d'un tableau pour les champs
+        $results = $this->engine->searchInDirectory($this->tempDir, ['name', 'title'], 'Leonard', 5);
 
         // Assert
         $this->assertGreaterThanOrEqual(2, count($results));
@@ -145,7 +145,7 @@ final class JsonlSearchEngineTest extends TestCase
     public function test_search_in_directory_returns_empty_array_when_directory_not_found(): void
     {
         // Act
-        $results = $this->engine->searchInDirectory('/nonexistent/directory_'.uniqid(), 'name', 'test', 5);
+        $results = $this->engine->searchInDirectory('/nonexistent/directory_'.uniqid(), ['name'], 'test', 5);
 
         // Assert
         $this->assertSame([], $results);
@@ -158,7 +158,7 @@ final class JsonlSearchEngineTest extends TestCase
         $this->fileSystem->makeDirectory($emptyDir, PermissionMode::WORLD_WRITABLE, true);
 
         // Act
-        $results = $this->engine->searchInDirectory($emptyDir, 'name', 'test', 5);
+        $results = $this->engine->searchInDirectory($emptyDir, ['name'], 'test', 5);
 
         // Assert
         $this->assertSame([], $results);
@@ -176,7 +176,7 @@ final class JsonlSearchEngineTest extends TestCase
         ]);
 
         // Act
-        $results = $this->engine->searchInDirectory($this->tempDir, 'name', 'Leonard', 3);
+        $results = $this->engine->searchInDirectory($this->tempDir, ['name'], 'Leonard', 3);
 
         // Assert
         $this->assertCount(3, $results);
@@ -192,7 +192,7 @@ final class JsonlSearchEngineTest extends TestCase
         ]);
 
         // Act
-        $results = $this->engine->searchInDirectory($this->tempDir, 'name|title', 'Leonard', 5);
+        $results = $this->engine->searchInDirectory($this->tempDir, ['name', 'title'], 'Leonard', 5);
 
         // Assert
         $this->assertCount(2, $results);
@@ -223,7 +223,7 @@ final class JsonlSearchEngineTest extends TestCase
         ]);
 
         // Act
-        $results = $this->engine->searchInDirectory($this->tempDir, 'user.name|user.profile.nickname', 'john', 5);
+        $results = $this->engine->searchInDirectory($this->tempDir, ['user.name', 'user.profile.nickname'], 'john', 5);
 
         // Assert
         $this->assertGreaterThanOrEqual(1, count($results));
@@ -238,7 +238,7 @@ final class JsonlSearchEngineTest extends TestCase
         ]);
 
         // Act
-        $results = $this->engine->searchInDirectory($this->tempDir, 'songs', 'Hallelujah', 5);
+        $results = $this->engine->searchInDirectory($this->tempDir, ['songs'], 'Hallelujah', 5);
 
         // Assert
         $this->assertCount(1, $results);
@@ -254,7 +254,7 @@ final class JsonlSearchEngineTest extends TestCase
         ]);
 
         // Act
-        $results = $this->engine->searchInDirectory($this->tempDir, 'name', 'Leonard Cohen', 5);
+        $results = $this->engine->searchInDirectory($this->tempDir, ['name'], 'Leonard Cohen', 5);
 
         // Assert
         $this->assertNotEmpty($results);
@@ -271,7 +271,7 @@ final class JsonlSearchEngineTest extends TestCase
         ]);
 
         // Act
-        $results = $this->engine->searchInDirectory($this->tempDir, 'name', 'Leonerd Coen', 5);
+        $results = $this->engine->searchInDirectory($this->tempDir, ['name'], 'Leonerd Coen', 5);
 
         // Assert
         $this->assertNotEmpty($results);
@@ -293,7 +293,7 @@ final class JsonlSearchEngineTest extends TestCase
         file_put_contents($filePath, $content);
 
         // Act
-        $results = $this->engine->searchInDirectory($this->tempDir, 'name', 'Subdirectory', 5);
+        $results = $this->engine->searchInDirectory($this->tempDir, ['name'], 'Subdirectory', 5);
 
         // Assert
         $this->assertGreaterThanOrEqual(1, count($results));

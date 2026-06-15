@@ -24,9 +24,8 @@ class JsonlSearchEngine extends BaseSearchEngine implements JsonlSearchInterface
     /**
      * {@inheritDoc}
      */
-    public function searchInDirectory(string $directory, string $fields, string $query, int $limit = 5): array
+    public function searchInDirectory(string $directory, array $fields, string $query, int $limit = 5): array
     {
-        $fieldList = array_map('trim', explode('|', $fields));
         $processedQuery = $this->queryProcessor->process($query);
 
         if (empty($processedQuery)) {
@@ -37,7 +36,7 @@ class JsonlSearchEngine extends BaseSearchEngine implements JsonlSearchInterface
         $allResults = [];
 
         foreach ($jsonlFiles as $filePath) {
-            $fileResults = $this->searchInFile($filePath, $fieldList, $query, $limit);
+            $fileResults = $this->searchInFile($filePath, $fields, $query, $limit);
             $allResults = array_merge($allResults, $fileResults);
         }
 
@@ -253,9 +252,6 @@ class JsonlSearchEngine extends BaseSearchEngine implements JsonlSearchInterface
     // Méthodes privées
     // ============================================================
 
-    /**
-     * Trouve tous les fichiers JSONL dans un dossier.
-     */
     private function findAllJsonlFiles(string $directory): array
     {
         if (! is_dir($directory)) {
