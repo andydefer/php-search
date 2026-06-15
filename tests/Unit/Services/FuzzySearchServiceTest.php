@@ -235,8 +235,13 @@ final class FuzzySearchServiceTest extends TestCase
 
         // Assert
         $this->assertCount(5, $results);
+
         foreach ($results as $result) {
-            $this->assertStringContainsStringIgnoringCase('leonard', $result['name']);
+            // Vérifier les deux formes : avec ou sans accent
+            $hasLeonard = stripos($result['name'], 'leonard') !== false ||
+                stripos($result['name'], 'léonard') !== false;
+
+            $this->assertTrue($hasLeonard, "Le nom '{$result['name']}' ne contient pas 'leonard' ou 'léonard'");
         }
     }
 

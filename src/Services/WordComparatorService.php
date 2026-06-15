@@ -67,6 +67,26 @@ class WordComparatorService implements WordComparatorInterface
     }
 
     /**
+     * Calculates Levenshtein distance penalty.
+     *
+     * @param  string  $word1  First word
+     * @param  string  $word2  Second word
+     * @return float Penalty between 0 and 0.5
+     */
+    private function calculateLevenshteinPenalty(string $word1, string $word2): float
+    {
+        $maxLength = max(strlen($word1), strlen($word2));
+        if ($maxLength === 0) {
+            return 0;
+        }
+
+        $distance = levenshtein($word1, $word2);
+
+        // Pénalité max de 50% pour les mots très différents
+        return min(0.5, $distance / $maxLength);
+    }
+
+    /**
      * Calculates match score using precomputed word data.
      *
      * @param  array<string, mixed>  $queryData  Precomputed query word data
@@ -79,11 +99,12 @@ class WordComparatorService implements WordComparatorInterface
         $itemWord = $itemData['normalized'];
         $maxPossible = $itemData['max_score'];
 
-        // Perfect match detection
-        if (str_contains($itemWord, $queryWord)) {
+        // Perfect match detection - exact match only
+        if ($itemWord === $queryWord) {
             return $maxPossible;
         }
 
+        // Calcul du score de base avec les n-grams
         $score = 0.0;
 
         foreach ($queryData['ngrams'] as $gram) {
@@ -96,6 +117,10 @@ class WordComparatorService implements WordComparatorInterface
                 break;
             }
         }
+
+        // Pénalité basée sur la distance Levenshtein
+        $levenshteinPenalty = $this->calculateLevenshteinPenalty($queryWord, $itemWord);
+        $score = $score * (1 - $levenshteinPenalty);
 
         return $score;
     }

@@ -164,8 +164,9 @@ final class SearchEngineServiceTest extends TestCase
         // Act
         $results = $this->engine->search('Leonard', 5);
 
-        // Assert
-        $this->assertGreaterThanOrEqual($results[0]['percentage'], $results[1]['percentage']);
+        // Assert - Le premier résultat doit avoir un pourcentage >= au deuxième
+
+        $this->assertGreaterThanOrEqual($results[1]['percentage'], $results[0]['percentage']);
     }
 
     public function test_clear_cache_removes_all_cached_data(): void
@@ -288,7 +289,11 @@ final class SearchEngineServiceTest extends TestCase
         // Assert
         $this->assertCount(5, $results);
         foreach ($results as $result) {
-            $this->assertStringContainsStringIgnoringCase('leonard', $result['name']);
+            // Vérifier les deux formes : avec ou sans accent
+            $hasLeonard = stripos($result['name'], 'leonard') !== false ||
+                stripos($result['name'], 'léonard') !== false;
+
+            $this->assertTrue($hasLeonard, "Le nom '{$result['name']}' ne contient pas 'leonard' ou 'léonard'");
         }
     }
 

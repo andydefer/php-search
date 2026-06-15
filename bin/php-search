@@ -6,6 +6,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use AndyDefer\PhpSearch\Contracts\Services\FuzzySearchInterface;
+use AndyDefer\PhpSearch\Contracts\Services\IndexedSearchInterface;
 use AndyDefer\PhpSearch\Contracts\Services\JsonlSearchInterface;
 
 function showHelp(): void
@@ -14,25 +15,39 @@ function showHelp(): void
 PHP Fuzzy Search Engine - CLI Tool
 
 USAGE:
+    # Indexation
+    php-search index <source>                    # Indexer un fichier JSON ou dossier JSONL
+    
+    # Recherche classique (fichier JSON)
     php-search <json-file> <query> [limit]
-    php-search <directory> <fields> <query> [limit]  (pour recherche JSONL)
+    
+    # Recherche JSONL (dossier)
+    php-search <directory> <fields> <query> [limit]
+    
+    # Recherche indexée (rapide)
+    php-search --indexed <query> [limit]
 
 ARGUMENTS:
-    json-file    Path to JSON file containing array of strings
-    directory    Directory containing .jsonl files
-    fields       Fields to search (separated by |, ex: "name|title")
-    query        Search query string
-    limit        Maximum number of results (default: 5)
+    source          Fichier JSON ou dossier JSONL à indexer
+    json-file       Path to JSON file containing array of strings
+    directory       Directory containing .jsonl files
+    fields          Fields to search (separated by |, ex: "name|title")
+    query           Search query string
+    limit           Maximum number of results (default: 5)
 
 EXAMPLES:
-    # Recherche dans fichier JSON
+    # Indexation
+    php-search index data.json
+    php-search index ./data_folder
+    
+    # Recherche classique
     php-search data.json "Leonard"
     
-    # Recherche dans dossier JSONL
+    # Recherche JSONL
     php-search ./data "name|title" "Leonard"
     
-    # Recherche avec notation pointée
-    php-search ./data "user.name|product.title" "John" 10
+    # Recherche indexée
+    php-search --indexed "Leonard" 10
 
 HELP;
 }
@@ -40,7 +55,7 @@ HELP;
 $argc = $_SERVER['argc'] ?? 0;
 $argv = $_SERVER['argv'] ?? [];
 
-if ($argc < 3) {
+if ($argc < 2) {
     showHelp();
     exit(1);
 }
@@ -48,7 +63,52 @@ if ($argc < 3) {
 $container = require __DIR__ . '/../config/container.php';
 
 try {
-    // Détecter si c'est une recherche JSONL ou JSON
+    // Mode indexation
+    if ($argv[1] === 'index') {
+        if ($argc < 3) {
+            showHelp();
+            exit(1);
+        }
+
+        $source = $argv[2];
+        $indexedSearch = $container->get(IndexedSearchInterface::class);
+        $count = $indexedSearch->index($source);
+
+        echo "✅ Indexation terminée: {$count} éléments indexés\n";
+        $stats = $indexedSearch->getIndexStats();
+        echo "📁 Dossier d'index: {$stats['index_path']}\n";
+        exit(0);
+    }
+
+    // Mode recherche indexée
+    if ($argv[1] === '--indexed') {
+        if ($argc < 3) {
+            showHelp();
+            exit(1);
+        }
+
+        $query = $argv[2];
+        $limit = $argc >= 4 ? (int)$argv[3] : 5;
+
+        $indexedSearch = $container->get(IndexedSearchInterface::class);
+        $results = $indexedSearch->search($query, $limit);
+
+        if (empty($results)) {
+            echo "No results found for '{$query}'.\n";
+        } else {
+            echo "Top " . count($results) . " results for '{$query}':\n";
+            echo str_repeat('=', 80) . "\n";
+            foreach ($results as $index => $result) {
+                $isMax = ($result['percentage'] == 100) ? ' - [MAX POSSIBLE]' : '';
+                echo ($index + 1) . '. ' . $result['name'] . "\n";
+                echo "   Source: {$result['source']}\n";
+                echo "   Score: {$result['score']} / max: {$result['max_possible']} - Relevance: {$result['percentage']}%{$isMax}\n";
+            }
+        }
+        exit(0);
+    }
+
+    // Détection automatique du mode
     if (is_dir($argv[1])) {
         // Mode JSONL
         if ($argc < 4) {
