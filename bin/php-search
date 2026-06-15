@@ -1,0 +1,54 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use AndyDefer\PhpSearch\Contracts\Services\FuzzySearchInterface;
+
+// Display help
+function showHelp(): void
+{
+    echo <<<HELP
+PHP Fuzzy Search Engine - CLI Tool
+
+USAGE:
+    php-search <json-file> <query> [limit]
+
+ARGUMENTS:
+    json-file    Path to JSON file containing array of strings
+    query        Search query string
+    limit        Maximum number of results (default: 5)
+
+EXAMPLES:
+    php-search data.json "Leonard"
+    php-search data.json "Leonard" 10
+    php-search artists.json "John Doe" 3
+
+HELP;
+}
+
+// Parse command line arguments
+$argc = $_SERVER['argc'] ?? 0;
+$argv = $_SERVER['argv'] ?? [];
+
+if ($argc < 3) {
+    showHelp();
+    exit(1);
+}
+
+$jsonFile = $argv[1];
+$query = $argv[2];
+$limit = $argc >= 4 ? (int)$argv[3] : 5;
+
+try {
+    $container = require __DIR__ . '/../config/container.php';
+    $fuzzySearch = $container->get(FuzzySearchInterface::class);
+
+    $results = $fuzzySearch->searchFromFile($jsonFile, $query, $limit);
+    echo $fuzzySearch->formatResults($results, $query);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+    exit(1);
+}

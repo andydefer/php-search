@@ -1,0 +1,41 @@
+{
+    "name": "andy-kani/php-search",
+    "description": "Fuzzy search package for PHP CLI",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "AndyDefer\\PhpSearch\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AndyDefer\\PhpSearch\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/php-search"
+    ],
+    "authors": [
+        {
+            "name": "Andy Kani",
+            "email": "andykanidimbu@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "composer/composer": "^2.0",
+        "phpunit/phpunit": "^12.5",
+        "rector/rector": "*",
+        "vimeo/psalm": "^6.14",
+        "friendsofphp/php-cs-fixer": "^3.95"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-unit": "phpunit --testsuite=unit",
+        "test-integration": "phpunit --testsuite=integration"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
