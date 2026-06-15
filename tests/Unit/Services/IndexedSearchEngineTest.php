@@ -249,13 +249,6 @@ final class IndexedSearchEngineTest extends TestCase
         // Act
         $results = $this->engine->search('Leonerd', 5);
 
-        echo "\n=== DEBUG ===\n";
-        echo 'Results count: '.count($results)."\n";
-        foreach ($results as $r) {
-            echo "Name: {$r['name']} - Percentage: {$r['percentage']}%\n";
-        }
-        echo "=== END DEBUG ===\n";
-
         // Assert
         $this->assertNotEmpty($results);
         $this->assertEquals('Leonard Cohen', $results[0]['name']);

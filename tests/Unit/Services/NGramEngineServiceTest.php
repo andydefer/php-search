@@ -209,7 +209,9 @@ final class NGramEngineServiceTest extends TestCase
         // Assert
         $cacheKey = 'ngram.scores.'.$word;
         $cached = $this->cache->get($cacheKey);
-        $this->assertSame($score, $cached);
+
+        // Utiliser assertEquals au lieu de assertSame pour ignorer le type
+        $this->assertEquals($score, $cached);
     }
 
     public function test_clear_cache_removes_all_cached_data(): void

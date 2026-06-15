@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use AndyDefer\PhpSearch\Contracts\Services\FuzzySearchInterface;
 use AndyDefer\PhpSearch\Contracts\Services\IndexedSearchInterface;
 use AndyDefer\PhpSearch\Contracts\Services\JsonlSearchInterface;
 
@@ -16,35 +15,30 @@ PHP Fuzzy Search Engine - CLI Tool
 
 USAGE:
     # Indexation
-    php-search index <source>                    # Indexer un fichier JSON ou dossier JSONL
+    php-search index <source>                    # Indexer un dossier de fichiers JSONL
     
-    # Recherche classique (fichier JSON)
-    php-search <json-file> <query> [limit]
-    
-    # Recherche JSONL (dossier)
+    # Recherche directe (sans index)
     php-search <directory> <fields> <query> [limit]
     
     # Recherche indexée (rapide)
     php-search --indexed <query> [limit]
 
 ARGUMENTS:
-    source          Fichier JSON ou dossier JSONL à indexer
-    json-file       Path to JSON file containing array of strings
-    directory       Directory containing .jsonl files
-    fields          Fields to search (separated by |, ex: "name|title")
-    query           Search query string
-    limit           Maximum number of results (default: 5)
+    source          Dossier contenant des fichiers JSONL à indexer
+    directory       Dossier contenant des fichiers JSONL
+    fields          Champs à rechercher (séparés par |, ex: "name|title")
+    query           Terme de recherche
+    limit           Nombre maximum de résultats (défaut: 5)
 
 EXAMPLES:
     # Indexation
-    php-search index data.json
     php-search index ./data_folder
     
-    # Recherche classique
-    php-search data.json "Leonard"
-    
-    # Recherche JSONL
+    # Recherche directe
     php-search ./data "name|title" "Leonard"
+    
+    # Recherche avec notation pointée
+    php-search ./data "user.name|product.title" "John" 10
     
     # Recherche indexée
     php-search --indexed "Leonard" 10
@@ -71,6 +65,11 @@ try {
         }
 
         $source = $argv[2];
+
+        if (!is_dir($source)) {
+            throw new \InvalidArgumentException("Source invalide: {$source} - Doit être un dossier");
+        }
+
         $indexedSearch = $container->get(IndexedSearchInterface::class);
         $count = $indexedSearch->index($source);
 
@@ -108,44 +107,35 @@ try {
         exit(0);
     }
 
-    // Détection automatique du mode
-    if (is_dir($argv[1])) {
-        // Mode JSONL
-        if ($argc < 4) {
-            showHelp();
-            exit(1);
-        }
+    // Mode recherche directe JSONL
+    if ($argc < 4) {
+        showHelp();
+        exit(1);
+    }
 
-        $directory = $argv[1];
-        $fields = $argv[2];
-        $query = $argv[3];
-        $limit = $argc >= 5 ? (int)$argv[4] : 5;
+    $directory = $argv[1];
+    $fields = $argv[2];
+    $query = $argv[3];
+    $limit = $argc >= 5 ? (int)$argv[4] : 5;
 
-        $jsonlSearch = $container->get(JsonlSearchInterface::class);
-        $results = $jsonlSearch->search($directory, $fields, $query, $limit);
+    if (!is_dir($directory)) {
+        throw new \InvalidArgumentException("Dossier invalide: {$directory}");
+    }
 
-        // Formatage des résultats JSONL
-        if (empty($results)) {
-            echo "No results found for '{$query}'.\n";
-        } else {
-            echo "Top " . count($results) . " results for '{$query}' in '{$directory}':\n";
-            echo str_repeat('=', 80) . "\n";
-            foreach ($results as $index => $result) {
-                $isMax = ($result['percentage'] == 100) ? ' - [MAX POSSIBLE]' : '';
-                echo ($index + 1) . '. ' . basename($result['file']) . ' (line ' . $result['line'] . ")\n";
-                echo "   Data: " . json_encode($result['data']) . "\n";
-                echo "   Score: {$result['score']} / max: {$result['max_possible']} - Relevance: {$result['percentage']}%{$isMax}\n";
-            }
-        }
+    $jsonlSearch = $container->get(JsonlSearchInterface::class);
+    $results = $jsonlSearch->search($directory, $fields, $query, $limit);
+
+    if (empty($results)) {
+        echo "No results found for '{$query}'.\n";
     } else {
-        // Mode JSON classique
-        $jsonFile = $argv[1];
-        $query = $argv[2];
-        $limit = $argc >= 4 ? (int)$argv[3] : 5;
-
-        $fuzzySearch = $container->get(FuzzySearchInterface::class);
-        $results = $fuzzySearch->searchFromFile($jsonFile, $query, $limit);
-        echo $fuzzySearch->formatResults($results, $query);
+        echo "Top " . count($results) . " results for '{$query}' in '{$directory}':\n";
+        echo str_repeat('=', 80) . "\n";
+        foreach ($results as $index => $result) {
+            $isMax = ($result['percentage'] == 100) ? ' - [MAX POSSIBLE]' : '';
+            echo ($index + 1) . '. ' . basename($result['file']) . ' (line ' . $result['line'] . ")\n";
+            echo "   Data: " . json_encode($result['data']) . "\n";
+            echo "   Score: {$result['score']} / max: {$result['max_possible']} - Relevance: {$result['percentage']}%{$isMax}\n";
+        }
     }
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
