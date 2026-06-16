@@ -20,6 +20,7 @@ final class IndexedItemRecord extends AbstractRecord
         public readonly string $source,
         public readonly int $line,
         public readonly string $field,
+
         public readonly StringTypedCollection $item_words,
     ) {}
 }
