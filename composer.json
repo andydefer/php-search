@@ -1,5 +1,5 @@
 {
-    "name": "andy-kani/php-search",
+    "name": "andydefer/php-search",
     "description": "Fuzzy search package for PHP CLI",
     "license": "MIT",
     "autoload": {
