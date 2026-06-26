@@ -23,7 +23,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "andydefer/php-jsonl": "^0.5.6"
+        "andydefer/php-jsonl": "^0.6.0"
     },
     "require-dev": {
         "composer/composer": "^2.0",
